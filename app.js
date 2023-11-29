@@ -10,12 +10,30 @@ formDOM.addEventListener("submit", (e) => {
   const value = inputDOM.value;
   if (!value) {
     resultsDOM.innerHTML =
-      '<div class="error"> please enter valid search term</div>';
+      '<div class="error">please enter valid search term</div>';
     return;
   }
   fetchPages(value);
 });
 
 const fetchPages = async (searchValue) => {
-  console.log(searchValue);
+  resultsDOM.innerHTML = '<div class="loading"></div>';
+  try {
+    const resp = await fetch(`${url}${searchValue}`);
+    const data = await resp.json();
+    const results = data.query.search;
+    if (results.length < 1) {
+      resultsDOM.innerHTML =
+        '<div class="error">no matching results. Please try again</div>';
+      return;
+    }
+    renderResults(results);
+  } catch (error) {
+    console.log(error);
+    resultsDOM.innerHTML = '<div class="error">there was an error...</div>';
+  }
+};
+
+const renderResults = (list) => {
+  console.log(list);
 };
